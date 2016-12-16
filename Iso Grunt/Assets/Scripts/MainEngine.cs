@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
+public enum GAMESTATE{BeginGame, Dialogue, Paused, CutScene, OverWorldPlay, BattlePlay, EnterScene, ExitScene, Ending};
 public enum KINGDOM{Animal, Monster, Machine};
 public enum SPECIES{Rat, Bat, Boar, Falcon, Wolf, Pterodactyl, Bear, Zombie, Toaster};
 public enum TARGETING{FirstEnemy, ChooseEnemy, Self, FirstAlly, ChooseAlly, AllEnemies, AllAllies, AllCharacters};
@@ -11,7 +12,11 @@ public class MainEngine : MonoBehaviour {
 
 	public static MainEngine self;
 
-	public GameObject transitionPrefab;
+	public GameObject transitionPrefab, pauseMenuPrefab, playerHudPrefab;
+
+	public Material redSwapMat, blueSwapMat, yellowSwapMat, greenSwapMat, purpleSwapMat, darkGraySwapMat, whiteSwapMat, tanSwapMat;
+
+	public Canvas mainCanvas;
 
 	public CreativeSpore.RpgMapEditor.PlayerController pControl;
 
@@ -21,13 +26,21 @@ public class MainEngine : MonoBehaviour {
 
 	public playSME playState = playSME.Roaming;
 
+	public GAMESTATE currentGameState;
+
+	public AudioSource audioSource;
+
+	public AudioClip buzzClip;
+
 	public string battleSceneName;
 
+	public bool fleeing;
 	public StatSheet mainSheet;
 	public List<StatSheet> partySheets = new List<StatSheet> ();
 	public SPECIES primaryEncounter;
 	public List<SPECIES> encounterEnemies = new List<SPECIES> ();
-	public int minBattleEnemies, maxBattleEnemies;
+	public List<Item> playerUsableItems = new List<Item>(), enemyUsableItems = new List<Item>();
+	public int minBattleEnemies, maxBattleEnemies, playerCoins;
 
 	// Use this for initialization
 	void Start ()
@@ -72,6 +85,51 @@ public class MainEngine : MonoBehaviour {
 				break;
 		}
 
+	}
+
+	public List<string> _battleItemsToOptions(bool showCosts)
+	{
+		List<string> odList = new List<string>();
+		foreach(Item pBItem in playerUsableItems)
+		{
+			string itemText = pBItem.itemName + ", " + pBItem.amount;
+			if(showCosts == true)
+			{
+				itemText += " : " + pBItem.purchaseValue + " Coins";
+			}
+			odList.Add(itemText);
+		}
+		return odList;
+	}
+
+	public void _addItem(Item givenItem)
+	{
+		foreach(Item itm in playerUsableItems)
+		{
+			if(itm.GetType() == givenItem.GetType())
+			{
+				itm.amount += givenItem.amount;
+				return;
+			}
+		}
+
+		playerUsableItems.Add(givenItem);
+	}
+
+	public bool _removeItem(Item givenItem, int removalAmount)//returns false when more trying to remove more of an item than you have
+	{
+		if(removalAmount > givenItem.amount)
+		{
+			return false;
+		}
+
+		givenItem.amount -= removalAmount;
+		if(givenItem.amount == 0)
+		{
+			playerUsableItems.Remove(givenItem);
+		}
+
+		return true;
 	}
 
 	void OnEnable()
