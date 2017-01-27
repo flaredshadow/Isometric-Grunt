@@ -6,8 +6,9 @@ public class Spoils : MonoBehaviour {
 
 	public static Spoils self;
 
-	public enum SPOILSSTATE {AddExp, AddCoins, RankUp, Wait}
+	public enum SPOILSSTATE {AddExp, AddCoins, RankUp, Wait, ReturnOWorld}
 
+	public GameObject teleporterPrefab;
 	public Text expEarnedLabel;
 	public Text coinsEarnedLabel;
 
@@ -27,7 +28,7 @@ public class Spoils : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update ()
-	{
+	{Debug.Log(MainEngine.self.currentGameState);
 		if(MainEngine.self.currentGameState == GAMESTATE.BattlePlay)
 		{
 			expEarnedLabel.text = "EXP Earned : " + BattleEngine.self.expEarned;
@@ -44,6 +45,8 @@ public class Spoils : MonoBehaviour {
 				case SPOILSSTATE.RankUp:
 					break;
 				case SPOILSSTATE.Wait:
+					break;
+				case SPOILSSTATE.ReturnOWorld:
 					break;
 			}
 		}
@@ -113,6 +116,13 @@ public class Spoils : MonoBehaviour {
 		{
 			MainEngine.self.fleeing = false;
 			Debug.Log("return to overworld");
+			MainEngine.self.playState = MainEngine.playSME.Roaming;
+			CreativeSpore.RpgMapEditor.TeleporterBehaviour tPorter = Instantiate(teleporterPrefab).GetComponent<CreativeSpore.RpgMapEditor.TeleporterBehaviour>();
+			tPorter.transform.position = MainEngine.self.transform.position;
+			tPorter.TeleportOnEnter = true;
+			tPorter.TargetSceneName = "OverWorld";
+			tPorter.TargetTeleporterName = "";
+			currentSpoilsState = SPOILSSTATE.ReturnOWorld;
 			//MainEngine.self._initiateSceneChange(Engine.self.CurrentWorldSceneName, doorEnum.ReturnFromBattle);
 		}
 	}

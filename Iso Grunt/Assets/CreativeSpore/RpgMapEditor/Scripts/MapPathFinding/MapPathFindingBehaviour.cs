@@ -14,36 +14,36 @@ namespace CreativeSpore.RpgMapEditor
         public delegate void OnComputedPathDelegate(MapPathFindingBehaviour source);
         public OnComputedPathDelegate OnComputedPath;
 
-        public LinkedList<IPathNode> Path { get; private set; }
+        public LinkedList<IPathNode> Path { get { return m_path; } }
         public float MinDistToMoveNextTarget = 0.02f;
 
         MovingBehaviour m_movingBehavior;
 
-        // Use this for initialization
+        private LinkedList<IPathNode> m_path = new LinkedList<IPathNode>();
+
         protected void Start()
         {
             m_movingBehavior = GetComponent<MovingBehaviour>();
-            Path = new LinkedList<IPathNode>();
         }
 
         protected MapPathFinding m_mapPathFinding = new MapPathFinding();
         int m_startTileIdx;
         int m_endTileIdx;
         bool m_isUpdatePath = false;
-        bool m_isComputing = false;
+        //bool m_isComputing = false; //Removed to keep actor moving until reach the center of the node
         LinkedListNode<IPathNode> m_curNode = null;
 
         //float now;
 
         float GetDistToTarget( AutoTile targetTile )
         {
-            Vector3 target = RpgMapHelper.GetTileCenterPosition(targetTile.TileX, targetTile.TileY);
+            Vector3 target = m_curNode.Next != null? RpgMapHelper.GetTileCenterPosition(targetTile.TileX, targetTile.TileY) : (Vector3)TargetPos;
             target.z = transform.position.z;
-            return (transform.position - target).magnitude;
+            float dist = (transform.position - target).magnitude;
+            return dist;
         }
 
-        // Update is called once per frame
-        protected void Update()
+        protected void FixedUpdate()
         {
             if (m_curNode != null)
             {                
@@ -74,7 +74,7 @@ namespace CreativeSpore.RpgMapEditor
                 int prevTileidx = m_startTileIdx;
                 m_startTileIdx = RpgMapHelper.GetTileIdxByPosition(TargetPos);
                 m_isUpdatePath |= prevTileidx != m_startTileIdx;
-                if (m_isUpdatePath || !m_isComputing)
+                if (m_isUpdatePath )//|| !m_isComputing)
                 {
                     m_isUpdatePath = false;
                     m_endTileIdx = RpgMapHelper.GetTileIdxByPosition(transform.position);
@@ -103,12 +103,12 @@ namespace CreativeSpore.RpgMapEditor
 
         IEnumerator ComputePath()
         {
-            m_isComputing = true;
+            //m_isComputing = true;
             IEnumerator coroutine = m_mapPathFinding.GetRouteFromToAsync(m_startTileIdx, m_endTileIdx);
             while (coroutine.MoveNext()) yield return null;
             //Debug.Log("GetRouteFromToAsync execution time(ms): " + (Time.realtimeSinceStartup - now) * 1000);
             PathFinding.FindingParams findingParams = (PathFinding.FindingParams)coroutine.Current;
-            Path = findingParams.computedPath;
+            m_path = findingParams.computedPath;
             //+++find closest node and take next one if possible
             m_curNode = Path.First;
             if( m_curNode != null )
@@ -130,7 +130,7 @@ namespace CreativeSpore.RpgMapEditor
                     m_curNode = m_curNode.Next;
             }
             //---
-            m_isComputing = false;
+            //m_isComputing = false;
             if (OnComputedPath != null)
             {
                 OnComputedPath(this);

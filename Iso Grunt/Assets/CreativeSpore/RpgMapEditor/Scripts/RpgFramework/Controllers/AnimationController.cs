@@ -31,13 +31,11 @@ namespace CreativeSpore.RpgMapEditor
 		
 		private SpriteRenderer m_spriteRenderer;
 		
-		// Use this for initialization
 		void Start () 
 		{
 			m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 		}
 		
-		// Update is called once per frame
 		void Update() 
 		{
 			if (IsAnimated)

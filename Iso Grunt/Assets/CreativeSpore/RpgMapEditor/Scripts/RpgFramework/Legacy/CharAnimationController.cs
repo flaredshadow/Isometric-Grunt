@@ -102,7 +102,6 @@ namespace CreativeSpore.RpgMapEditor
                 CreateSpriteFrames();
 		}
 
-		// Use this for initialization
 		void Start () 
 		{
             if (TargetSpriteRenderer == null)

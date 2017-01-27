@@ -275,12 +275,17 @@ namespace CreativeSpore.RpgMapEditor
                     textureImporter.compressionQuality = 100;
 					textureImporter.isReadable = true;
 					textureImporter.spritePixelsPerUnit = AutoTileset.PixelToUnits;                    
-					textureImporter.spriteImportMode = SpriteImportMode.None;
+					//textureImporter.spriteImportMode = SpriteImportMode.None;
 					textureImporter.wrapMode = TextureWrapMode.Clamp;
 					textureImporter.filterMode = FilterMode.Point;
-					textureImporter.textureFormat = TextureImporterFormat.ARGB32;
-                    textureImporter.textureType = TextureImporterType.Advanced;
-					textureImporter.maxTextureSize = AutoTileset.k_MaxTextureSize;                    
+#if UNITY_5_5_OR_NEWER
+                    textureImporter.textureCompression = TextureImporterCompression.Uncompressed;
+                    //textureImporter.textureType = TextureImporterType.Default;
+#else
+                    textureImporter.textureFormat = TextureImporterFormat.AutomaticTruecolor;
+                    //textureImporter.textureType = TextureImporterType.Advanced;
+#endif
+                    textureImporter.maxTextureSize = AutoTileset.k_MaxTextureSize;                    
 					AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate); 
 				}
 				return true;

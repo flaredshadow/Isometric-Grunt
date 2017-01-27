@@ -241,7 +241,11 @@ namespace CreativeSpore.RpgMapEditor
                     spriteSheetImporter.spriteImportMode = SpriteImportMode.Multiple;
                     spriteSheetImporter.filterMode = FilterMode.Point;
                     spriteSheetImporter.mipmapEnabled = false;
+#if UNITY_5_5_OR_NEWER
+                    spriteSheetImporter.textureCompression = TextureImporterCompression.Uncompressed;
+#else
                     spriteSheetImporter.textureFormat = TextureImporterFormat.AutomaticTruecolor;
+#endif
                     Rect spriteRect = new Rect(0, 0, spriteSheet.width / (m_target.FramesPerAnim * charRowLength), spriteSheet.height / (m_target.DirectionsPerAnim * charColumnLength));
                     for (int gy = 0, spriteIdx = 0; gy < rows; ++gy)
                     {
@@ -285,7 +289,7 @@ namespace CreativeSpore.RpgMapEditor
 
             List<Sprite> sortedSprites = new List<Sprite>();
             charRowLength = Mathf.Max(1, columns / m_target.FramesPerAnim);
-            charColumnLength = Mathf.Max(1, rows / m_target.FramesPerAnim);
+            charColumnLength = Mathf.Max(1, rows / m_target.DirectionsPerAnim);
             for(int charY = 0; charY < charColumnLength; ++charY)
             {
                 for(int charX = 0; charX < charRowLength; ++charX)
@@ -381,7 +385,9 @@ namespace CreativeSpore.RpgMapEditor
                 aSpriteMetaData[i].alignment = (int)m_target.SpriteAlignment;
                 aSpriteMetaData[i].pivot = GetPivotValue(m_target.SpriteAlignment, m_target.CustomPivot);
             }
+            SpriteImportMode savedMode = spriteSheetImporter.spriteImportMode;
             spriteSheetImporter.textureType = TextureImporterType.Sprite; // NOTE: without this, "spriteSheetImporter.spritesheet = aSpriteMetaData" won't be effective. I don't know why.
+            spriteSheetImporter.spriteImportMode = savedMode; // fix: Unity 5.5 will set this to Single after setting textureType to Sprite.
             spriteSheetImporter.spritesheet = aSpriteMetaData;
             AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
         }

@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace CreativeSpore.RpgMapEditor
 {
+    /// <summary>
+    /// This component will sort the gameobject by Z position in a range between the first ground layer found in the tilemap to the last Overlay layer found in the tilemap.
+    /// </summary>
     [AddComponentMenu("RpgMapEditor/Controllers/IsoSpriteController", 10)]
 	public class IsoSpriteController : MonoBehaviour {
 
@@ -10,7 +13,11 @@ namespace CreativeSpore.RpgMapEditor
 
         private float m_OverlayLayerZ, m_GroundOverlayLayerZ;
 
-		// Use this for initialization
+        void Reset()
+        {
+            m_spriteRender = GetComponent<SpriteRenderer>();
+        }
+
 		void Start () 
         {
 			if (m_spriteRender == null)
@@ -28,7 +35,6 @@ namespace CreativeSpore.RpgMapEditor
             m_GroundOverlayLayerZ = autoTileMap.FindLastLayer(eLayerType.Ground).Depth;
         }
 		
-		// Update is called once per frame
 		void Update () 
 		{
 			Vector3 vPos = m_spriteRender.transform.position;

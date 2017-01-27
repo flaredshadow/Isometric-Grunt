@@ -123,7 +123,8 @@ namespace CreativeSpore.RpgMapEditor
         {
             while (m_tileChunkToBeUpdated.Count > 0)
             {
-                m_tileChunkToBeUpdated[0].RefreshTileData();
+                if (m_tileChunkToBeUpdated[0])
+                    m_tileChunkToBeUpdated[0].RefreshTileData();
                 m_tileChunkToBeUpdated.RemoveAt(0);
                 yield return null;
             }

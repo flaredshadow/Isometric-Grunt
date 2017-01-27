@@ -15,7 +15,6 @@ namespace CreativeSpore.RpgMapEditor
 
         private Rect m_boundingBox;
 
-		// Use this for initialization
 		void Start () 
 		{
 			Camera = GetComponent<Camera>();
@@ -52,7 +51,6 @@ namespace CreativeSpore.RpgMapEditor
             }
         }
 
-        // Update is called once per frame
         void DoKeepInsideMapBounds()
         {
             Rect rCamera = new Rect();

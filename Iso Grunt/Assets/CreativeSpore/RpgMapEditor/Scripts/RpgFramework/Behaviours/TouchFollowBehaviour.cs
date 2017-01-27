@@ -21,7 +21,6 @@ namespace CreativeSpore.RpgMapEditor
         DirectionalAnimation m_animCtrl;
 
 
-        // Use this for initialization
         void Start()
         {
             m_moving = GetComponent<MovingBehaviour>();
@@ -36,7 +35,6 @@ namespace CreativeSpore.RpgMapEditor
             m_animCtrl.SetAnimDirection(m_moving.Veloc);
         }
 
-        // Update is called once per frame
         void Update()
         {
             // Get pressed world position
@@ -50,7 +48,11 @@ namespace CreativeSpore.RpgMapEditor
                 if (hPlane.Raycast(ray, out distance))
                 {
                     // get the hit point:
-                    m_pathFindingBehaviour.TargetPos = ray.GetPoint(distance);
+                    Vector2 vHitPoint = ray.GetPoint(distance);
+                    if (AutoTileMap.Instance.GetAutotileCollisionAtPosition(vHitPoint) == eTileCollisionType.PASSABLE)
+                    {
+                        m_pathFindingBehaviour.TargetPos = ray.GetPoint(distance);
+                    }
                 }
             }
             Vector3 vTarget = m_pathFindingBehaviour.TargetPos;
@@ -59,19 +61,17 @@ namespace CreativeSpore.RpgMapEditor
 
             // stop when target position has been reached
             Vector3 vDist = (vTarget - transform.position);
-            //Debug.DrawLine(vTarget, transform.position); //TODO: the target is the touch position, not the target tile center. Fix this to go to target position once in the target tile
-            m_pathFindingBehaviour.enabled = vDist.magnitude > MinDistToReachTarget;            
-            if (!m_pathFindingBehaviour.enabled)
+            Debug.DrawLine(vTarget, transform.position); //TODO: the target is the touch position, not the target tile center. Fix this to go to target position once in the target tile
+            m_pathFindingBehaviour.enabled = vDist.magnitude > MinDistToReachTarget;
+            if (!m_pathFindingBehaviour.enabled || m_pathFindingBehaviour.Path.Count == 0)
             {
                 m_moving.Veloc = Vector3.zero;
             }
+        }
 
-            //fix to avoid flickering of the creature when collides with wall
-            if (Time.frameCount % 16 == 0)
-            //---   
-            {
-                UpdateAnimDir();
-            }
+        void FixedUpdate()
+        {
+            UpdateAnimDir();
         }
     }
 }

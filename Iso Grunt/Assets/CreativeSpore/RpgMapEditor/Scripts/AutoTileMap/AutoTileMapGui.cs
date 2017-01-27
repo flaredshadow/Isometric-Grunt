@@ -64,7 +64,6 @@ namespace CreativeSpore.RpgMapEditor
 		}
 		private eEditorWindow m_focusWindow;
 
-		// Use this for initialization
 		public void Init() 
 		{
 			m_autoTileMap = GetComponent<AutoTileMap>();

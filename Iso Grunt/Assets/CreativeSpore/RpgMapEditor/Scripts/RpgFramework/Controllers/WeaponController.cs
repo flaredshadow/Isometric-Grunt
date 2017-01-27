@@ -37,13 +37,11 @@ namespace CreativeSpore.RpgMapEditor
 
 		private DirectionalAnimation m_charAnimCtrl;
 
-		// Use this for initialization
 		void Start () 
 		{
             m_charAnimCtrl = GetComponent<DirectionalAnimation>();
 		}
 		
-		// Update is called once per frame
 		void LateUpdate () 
 		{
 			WeaponSprite.sprite = WeaponSpriteHorizontal;

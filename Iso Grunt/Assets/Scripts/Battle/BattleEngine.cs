@@ -50,7 +50,7 @@ public class BattleEngine : MonoBehaviour {
 	void Start ()
 	{
 		self = this;
-
+		MainEngine.self.currentGameState = GAMESTATE.BattlePlay;
 		foreach(StatSheet liveSheet in MainEngine.self._getLiveParty())
 		{
 			GameObject bcGO = Instantiate(bCharPrefab);
@@ -317,7 +317,6 @@ public class BattleEngine : MonoBehaviour {
 				break;
 			case BATTLESTATE.PlayerWin:
 				//Destroy (MainEngine.self.EncounterOverworldEnemy);
-				Debug.Log("player win");
 				break;
 			case BATTLESTATE.PlayerLose:
 				break;
@@ -700,7 +699,7 @@ public class BattleEngine : MonoBehaviour {
 				command._setAttributes("z", 3f, -1, true, Random.Range(0, 22));
 				Vector3 swipePos = new Vector3(targOpposed[0].transform.position.x, actingBC.transform.position.y, actingBC.transform.position.z);
 				swipePos.x += targOpposed[0].transform.right.x * (targOpposed[0].bcCollider.bounds.extents.x + actingBC.bcCollider.bounds.extents.x);
-				iTween.MoveTo(actingBC.gameObject, iTween.Hash(iT.MoveTo.position, swipePos));
+				iTween.MoveTo(actingBC.gameObject, iTween.Hash(iT.MoveTo.position, swipePos, iT.MoveTo.speed, 1, iT.MoveTo.easetype, "easeInOutQuad"));
 				currentAState = ATTACKSTATE.MovePreAction;
 				break;
 			case ATTACKSTATE.MovePreAction:

@@ -19,7 +19,6 @@ namespace CreativeSpore.RpgMapEditor
 			Destroy( transform.gameObject, TimeToLive);
 		}
 
-		// Update is called once per frame
 		void Update () 
 		{
 			if( AutoTileMap.Instance.GetAutotileCollisionAtPosition( transform.position ) == eTileCollisionType.BLOCK )

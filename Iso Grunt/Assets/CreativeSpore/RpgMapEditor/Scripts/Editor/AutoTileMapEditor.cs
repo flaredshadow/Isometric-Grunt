@@ -363,7 +363,7 @@ namespace CreativeSpore.RpgMapEditor
 
             if (GUILayout.Button("Clear Map..."))
             {
-                bool isOk = EditorUtility.DisplayDialog("Clear Map...", "Are you sure?", "Yes");
+                bool isOk = EditorUtility.DisplayDialog("Clear Map...", "Are you sure?", "Yes", "No");
                 if (isOk)
                 {
                     MyAutoTileMap.ClearMap();
@@ -482,7 +482,7 @@ namespace CreativeSpore.RpgMapEditor
 
                 if (GUILayout.Button("Clear Selected Layer: " + MyAutoTileMap.MapLayers[m_layerList.index].Name))
                 {
-                    if (EditorUtility.DisplayDialog("Clear Layer " + MyAutoTileMap.MapLayers[m_layerList.index].Name, "Are your sure? This action cannot be undone!", "Clear Layer"))
+                    if (EditorUtility.DisplayDialog("Clear Layer " + MyAutoTileMap.MapLayers[m_layerList.index].Name, "Are your sure? This action cannot be undone!", "Clear Layer", "Cancel"))
                     {
                         MyAutoTileMap.ClearLayer(MyAutoTileMap.MapLayers[m_layerList.index]);
                         MyAutoTileMap.MarkLayerChunksForUpdate(MyAutoTileMap.MapLayers[m_layerList.index]);

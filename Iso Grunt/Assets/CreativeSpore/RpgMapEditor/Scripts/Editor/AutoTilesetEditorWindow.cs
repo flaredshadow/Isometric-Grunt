@@ -444,7 +444,7 @@ namespace CreativeSpore.RpgMapEditor
 
 			if( GUILayout.Button( "Default Configuration") )
 			{
-				bool isOk = EditorUtility.DisplayDialog("Set Default Collision Data", "Are you sure?", "Yes");
+				bool isOk = EditorUtility.DisplayDialog("Set Default Collision Data", "Are you sure?", "Yes", "No");
 				if( isOk )
 				{
 					SetDefaultConfig();
@@ -454,7 +454,7 @@ namespace CreativeSpore.RpgMapEditor
             
 			if( GUILayout.Button( "Clear") )
 			{
-				bool isOk = EditorUtility.DisplayDialog("Clear Collision Data", "Are you sure?", "Yes");
+				bool isOk = EditorUtility.DisplayDialog("Clear Collision Data", "Are you sure?", "Yes", "No");
 				if( isOk )
 				{
                     System.Array.Clear(m_autoTileset.AutotileCollType, m_subTilesetIdx * AutoTileset.k_TilesPerSubTileset, AutoTileset.k_TilesPerSubTileset);

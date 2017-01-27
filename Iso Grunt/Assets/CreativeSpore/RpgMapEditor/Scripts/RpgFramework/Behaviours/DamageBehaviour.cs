@@ -17,14 +17,12 @@ namespace CreativeSpore.RpgMapEditor
 		private float m_timerGodMode;
 		private DamageData m_lastDamageData;
 
-		// Use this for initialization
 		void Start () 
 		{
 			m_sprRender = GetComponentInChildren<SpriteRenderer>();
 			m_movingBehaviour = GetComponent<MovingBehaviour>();
 		}
 		
-		// Update is called once per frame
 		void Update () 
 		{
 			if( m_timerGodMode > 0 )

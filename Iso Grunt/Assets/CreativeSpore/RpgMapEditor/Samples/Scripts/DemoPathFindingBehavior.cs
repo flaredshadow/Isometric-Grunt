@@ -50,9 +50,9 @@ public class DemoPathFindingBehavior : MapPathFindingBehaviour
         m_lastComputeTime = Time.realtimeSinceStartup;
     }
 
-    new void Update()
+    new void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
         TargetPos = m_player.transform.position;
 
         if( !AutoTileMap.Instance.AutoTileMapGui.enabled )

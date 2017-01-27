@@ -38,7 +38,6 @@ namespace CreativeSpore.RpgMapEditor
             m_vPrevPos = transform.position;
         }
 
-		// Update is called once per frame
 		void FixedUpdate () 
 		{
 			//RpgMapHelper.DebugDrawRect( transform.position, CollRect, Color.white );

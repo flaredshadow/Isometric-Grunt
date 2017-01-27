@@ -14,12 +14,6 @@ namespace CreativeSpore.RpgMapEditor
 		public float MaxForce = 0.01f;
 		public float MaxSpeed = 0.01f;
 
-		// Use this for initialization
-		void Start () 
-		{
-			
-		}
-
 		static void LimitVect( ref Vector3 vRef, float limit )
 		{
 			if (vRef.sqrMagnitude > limit * limit)
@@ -28,8 +22,7 @@ namespace CreativeSpore.RpgMapEditor
 			}
 		}
 		
-		// Update is called once per frame
-		void Update () 
+		void FixedUpdate () //NOTE: using Update will make the player to flickering on collision
 		{
 			Veloc += Acc;
 			Veloc.z = 0f;

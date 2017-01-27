@@ -1,3 +1,17 @@
+--- 1.5.3 ---
+- FIXED An atlas texture can now be set to Sprite/multiple to make sprites from it.
+- FIXED issues with Path Finding when FPS was high (using Fast Quatilty in the Editor)
+- FIXED issues with FollowerAI
+- FIXED touch player controller
+- FIXED player flickering when using the touch controller
+
+--- 1.5.2 ---
+- Added SetAnim(string name) to DirectionalAnimation
+- Added OnAnimationLoopOver event to DirectionalAnimation
+- Fixed bug in the DirectionalAnimationController triggering in some cases an out of bounds exception
+- Fixed Unity 5.4 warnings about OnLevelWasLoaded
+- Fixed some Unity5 compatibility issues
+
 --- 1.5.1 ---
 - Fixed issue when adding or removing sub-tilesets from a tileset, the colliders were gone
 - Added support for 2D collider check in CompanionAI and NPCBasicAI

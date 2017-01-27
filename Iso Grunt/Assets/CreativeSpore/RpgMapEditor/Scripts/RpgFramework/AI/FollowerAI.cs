@@ -37,7 +37,6 @@ namespace CreativeSpore.RpgMapEditor
 		public float AngRandOff = 15f;
 		float m_fAngOff;
 
-		// Use this for initialization
 		void Start () 
 		{
 			m_fAngOff = 360f * Random.value;
@@ -63,8 +62,7 @@ namespace CreativeSpore.RpgMapEditor
             }
         }
 
-		// Update is called once per frame
-		void Update() 
+		void FixedUpdate() 
 		{
             Vector3 vPlayerPos = m_player.transform.position; vPlayerPos.z = transform.position.z;
             Ray2D sightRay = new Ray2D(transform.position, vPlayerPos - transform.position);
@@ -78,15 +76,18 @@ namespace CreativeSpore.RpgMapEditor
             }
 
             bool isTargetReached = Vector2.Distance(m_pathFindingBehaviour.TargetPos, transform.position) <= MinDistToReachTarget;
-            if (!isPlayerSeen && isTargetReached)
+            if (!isPlayerSeen)
             {
-                // Move around
-                m_pathFindingBehaviour.enabled = false;
-                vPlayerPos = transform.position;
-                m_fAngOff += Random.Range(-AngRandOff, AngRandOff);
-                Vector3 vOffset = Quaternion.AngleAxis(m_fAngOff, Vector3.forward) * (AngRandRadious * Vector3.right);
-                vPlayerPos += vOffset;
-                m_moving.Arrive(vPlayerPos);
+                if (m_pathFindingBehaviour.Path.Count == 0)
+                {
+                    // Move around
+                    m_pathFindingBehaviour.enabled = false;
+                    vPlayerPos = transform.position;
+                    m_fAngOff += Random.Range(-AngRandOff, AngRandOff);
+                    Vector3 vOffset = Quaternion.AngleAxis(m_fAngOff, Vector3.forward) * (AngRandRadious * Vector3.right);
+                    vPlayerPos += vOffset;
+                    m_moving.Arrive(vPlayerPos);
+                }
             }
             else // Follow the player
             {                
