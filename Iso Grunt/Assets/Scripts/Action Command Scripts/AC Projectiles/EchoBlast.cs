@@ -31,7 +31,7 @@ public class EchoBlast : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter (Collider other)
+	void OnTriggerEnter2D (Collider2D other)
 	{
 		BattleCharacter hitBC = other.GetComponent<BattleCharacter>();
 		if(hitBC != null && BattleEngine.self.targOpposed.Contains(hitBC))

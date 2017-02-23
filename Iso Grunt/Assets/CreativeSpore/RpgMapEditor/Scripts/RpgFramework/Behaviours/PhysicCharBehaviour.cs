@@ -38,7 +38,8 @@ namespace CreativeSpore.RpgMapEditor
             m_vPrevPos = transform.position;
         }
 
-		void FixedUpdate () 
+		// was Fixed Update, Max changed it to Update to Fix jittering player movement
+		void Update () 
 		{
 			//RpgMapHelper.DebugDrawRect( transform.position, CollRect, Color.white );
 			if (Dir.sqrMagnitude > 0f)

@@ -11,8 +11,8 @@ public class BattleCharacter : MonoBehaviour {
 	public float elevation, pointFoundThresh = .02f;
 	public List<BattleCharacter> team;
 	public SpriteRenderer spRenderer;
-	public Rigidbody rBody;
-	public Collider bcCollider;
+	public Rigidbody2D rBody;
+	public BoxCollider2D bcCollider;
 	public bool loseTurn;
 	public PlayerHud hud;
 	public GameObject hitGO;
@@ -37,11 +37,12 @@ public class BattleCharacter : MonoBehaviour {
 
 	public void adjustCollider()
 	{
-		gameObject.GetComponent<BoxCollider>().size = spRenderer.sprite.bounds.size;
+		bcCollider.size = spRenderer.sprite.bounds.size;
 	}
 
-	void OnTriggerEnter(Collider other)
-	{Debug.Log("hit");
+	void OnTriggerEnter2D (Collider2D other)
+	{
+		//Debug.Log("hit");
 		hitGO = other.gameObject;
 	}
 
@@ -69,7 +70,7 @@ public class BattleCharacter : MonoBehaviour {
 		}
 		else
 		{
-			transform.position = Vector3.MoveTowards(transform.position, givenDestination, givenSpeed);
+			iTween.MoveTo(gameObject, iTween.Hash(iT.MoveTo.position, givenDestination, iT.MoveTo.speed, givenSpeed*5, iT.MoveTo.easetype, "easeInOutQuad"));
 			return false;
 		}
 	}

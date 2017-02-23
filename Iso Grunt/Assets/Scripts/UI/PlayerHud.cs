@@ -92,7 +92,7 @@ public class PlayerHud : MonoBehaviour {
 
 	public void _makeStatAdders()
 	{
-		Vector3 spacing = new Vector3(40, 0, 0);
+		Vector3 spacing = new Vector3(70, 0, 0); // the distance between the stat text and the column of plusses
 		List<Button> plusList = new List<Button>();
 		int numberOfStats = 4;
 		hudsRankingUp += 1;//static counter of all huds that are in the process of ranking up

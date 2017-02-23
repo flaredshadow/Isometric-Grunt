@@ -1,10 +1,17 @@
 fileFormatVersion: 2
 guid: 56f24f38818788d449e56cf6a6c823c0
-timeCreated: 1478673226
+timeCreated: 1486530875
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - dizzyStarsPrefab: {instanceID: 0}
+  - poisonIcon: {fileID: 21300000, guid: 12ed89cebabd1634cbfda6cc374a2854, type: 3}
+  - paralysisIcon: {instanceID: 0}
+  - swordIcon: {instanceID: 0}
+  - shieldIcon: {instanceID: 0}
+  - owner: {instanceID: 0}
+  - icon: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -22,11 +22,36 @@ public class StatSheet {
 			case SPECIES.Rat:
 				maxHp = 1;
 				maxSp = 5;
+				pow = 4;
+				def = 1;
+				hpGain = 1;
+				spGain = 1;
+				powGain = 1;
+				defGain = 1;
+				electivePointsGain = 1;
+				expWorth = 1;
+				coinWorth = 1;
 				abilities.Add(new SquirmingClaws());
 				abilities.Add(new PiedPiper());
-				abilities.Add(new PoisonTest());
 				spells.Add(new PlagueBite());
 				spells.Add(new SewerStench());
+				//potentialItems.Add(new Potion());
+				//potentialItemsChances.Add(.5f);
+				break;
+
+			case SPECIES.Bat:
+				maxHp = 10;
+				maxSp = 5;
+				pow = 4;
+				def = 1;
+				hpGain = 1;
+				spGain = 1;
+				powGain = 1;
+				defGain = 1;
+				electivePointsGain = 1;
+				expWorth = 1;
+				coinWorth = 1;
+				charSpecies = SPECIES.Bat;
 				//potentialItems.Add(new Potion());
 				//potentialItemsChances.Add(.5f);
 				break;
@@ -35,6 +60,8 @@ public class StatSheet {
 		hp = maxHp;
 		sp = maxSp;
 		exp = 0;
+		maxExp = 100;
+		maxExpGrowth = 2;
 	}
 
 	public List<Dropdown.OptionData> _attacksToOptions(List<Attack> givenAttackList)
@@ -82,5 +109,10 @@ public class StatSheet {
 	public int _calcDef()
 	{
 		return def;
+	}
+
+	public void setName(string givenName)
+	{
+		charName = givenName;
 	}
 }

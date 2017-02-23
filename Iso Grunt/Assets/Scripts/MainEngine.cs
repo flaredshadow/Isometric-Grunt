@@ -16,9 +16,7 @@ public class MainEngine : MonoBehaviour {
 
 	public Material redSwapMat, blueSwapMat, yellowSwapMat, greenSwapMat, purpleSwapMat, darkGraySwapMat, whiteSwapMat, tanSwapMat;
 
-	public Canvas mainCanvas;
-
-	public CreativeSpore.RpgMapEditor.PlayerController pControl;
+	public CreativeSpore.RpgMapEditor.PlayerController pControl; // reference to the rpg Player
 
 	public CreativeSpore.RpgMapEditor.PhysicCharBehaviour physCharBehav;
 
@@ -40,19 +38,20 @@ public class MainEngine : MonoBehaviour {
 	public SPECIES primaryEncounter;
 	public List<SPECIES> encounterEnemies = new List<SPECIES> ();
 	public List<Item> playerUsableItems = new List<Item>(), enemyUsableItems = new List<Item>();
+	public List<GameObject> sceneControllerGOs = new List<GameObject>();
 	public int minBattleEnemies, maxBattleEnemies, playerCoins;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
 	{
 		self = this;
 		if(partySheets.Count == 0)
 		{
 			mainSheet = new StatSheet("Main Guy", SPECIES.Rat);
 			partySheets.Add(mainSheet);
-			partySheets.Add(new StatSheet("Second Guy", SPECIES.Rat));
-			partySheets.Add(new StatSheet("Third Guy", SPECIES.Rat));
-			partySheets.Add(new StatSheet("Fourth Guy", SPECIES.Rat));
+			//partySheets.Add(new StatSheet("Second Guy", SPECIES.Rat));
+			//partySheets.Add(new StatSheet("Third Guy", SPECIES.Rat));
+			//partySheets.Add(new StatSheet("Fourth Guy", SPECIES.Rat));
 		}
 	}
 	
@@ -146,6 +145,10 @@ public class MainEngine : MonoBehaviour {
 
 	void _OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
 	{
+		foreach (GameObject sControl in sceneControllerGOs)
+		{
+			sControl.SetActive(sControl.GetComponent<SceneController>().originalIndex == SceneManager.GetActiveScene().buildIndex);
+		}
 		_setState(MainEngine.playSME.Transitioning);
 		GameObject transitionGO = Instantiate(transitionPrefab);
 		transitionGO.GetComponent<Transition>().initUnFade();

@@ -18,7 +18,7 @@ public class Transition : MonoBehaviour {
 	{
 		// set image size to cover the whole screen
 		(transform as RectTransform).sizeDelta = new Vector2(Screen.width, Screen.height);
-		transform.SetParent(FindObjectOfType<Canvas>().transform, false);
+		transform.SetParent(MainCanvas.self.transform, false);
 	}
 	
 	// Update is called once per frame

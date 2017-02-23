@@ -12,7 +12,7 @@ public class TombStone : MonoBehaviour {
 	void Start ()
 	{
 		totalTombStones += 1;
-		float yEnd = GetComponent<BoxCollider>().bounds.extents.y/2f + BattleEngine.self.arenaCenter.y;
+		float yEnd = GetComponent<BoxCollider2D>().bounds.extents.y/2f + BattleEngine.self.arenaCenter.y;
 		Vector3 destination = new Vector3(transform.position.x, yEnd, transform.position.z);
 		iTween.MoveTo(gameObject, iTween.Hash(iT.MoveTo.position, destination, iT.MoveTo.easetype, "easeInExpo", iT.MoveTo.time, 2));
 	}
@@ -23,7 +23,7 @@ public class TombStone : MonoBehaviour {
 	
 	}
 
-	void OnTriggerEnter (Collider other)
+	void OnTriggerEnter2D (Collider2D other)
 	{
 		if(other.GetComponent<BattleCharacter>() != null)
 		{

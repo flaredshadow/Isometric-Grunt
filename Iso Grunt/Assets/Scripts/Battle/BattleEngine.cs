@@ -7,12 +7,16 @@ public class BattleEngine : MonoBehaviour {
 
 	public static BattleEngine self;
 
-	public GameObject bCharPrefab, buttonPrefab, dropDownPrefab, explosionPrefab, tombStonePrefab, spoilsPrefab, damagePrefab, rapidCommandPrefab, pressCommandPrefab,
-	statusEffectPrefab;
+	public GameObject bCharPrefab, buttonPrefab, dropDownPrefab, explosionPrefab, tombStonePrefab, spoilsPrefab, damagePrefab,
+	rapidCommandPrefab, pressCommandPrefab, precisionCommandPrefab, chargeCommandPrefab, pipeCommandPrefab,
+	pipeRatPrefab,
+	statusEffectPrefab, dizzyStarsPrefab;
 
 	public Canvas battleCanvas;
 	public AudioSource bEngineAudio;
 	public AudioClip buzzClip;
+
+	public Sprite poisonIcon, paralysisIcon, swordIcon, shieldIcon;
 
 	public enum BATTLESTATE
 	{
@@ -28,7 +32,7 @@ public class BattleEngine : MonoBehaviour {
 	public BATTLESTATE? currentBState, postWaitBState, delayedBState;
 	public ATTACKSTATE? currentAState, postWaitAState, delayedAState;
 	public Vector3 arenaCenter;
-	public float charSpacing, walkSpeed = .01f, standardWaitTime = .5f;
+	public float charSpacing, walkSpeed = 1f, standardWaitTime = .5f;
 	public int statusEffectsResolved, commandsDestroyed, attackSubState = 0, bonus = 0, expEarned = 0, coinsEarned = 0;
 	public bool preGotNextCharInLine;
 	public BattleCharacter actingBC;
@@ -276,7 +280,7 @@ public class BattleEngine : MonoBehaviour {
 
 				foreach (BattleCharacter enemyC in enemyCharacters)
 				{
-					_goToStart (enemyC);
+					_listenForLineUp (enemyC);
 					enemyC.hud.transform.position = enemyC._calcHudPosition();
 					if (enemyC.transform.localPosition.x != _getLinePos(enemyC).x)
 					{
@@ -286,7 +290,7 @@ public class BattleEngine : MonoBehaviour {
 
 				foreach (BattleCharacter playerC in playerCharacters)
 				{
-					_goToStart (playerC);
+					_listenForLineUp (playerC);
 					playerC.hud.transform.position = playerC._calcHudPosition();
 					if (playerC.transform.localPosition.x != _getLinePos(playerC).x)
 					{
@@ -305,7 +309,8 @@ public class BattleEngine : MonoBehaviour {
 					else if (enemyCharacters.Count == 0)
 					{
 						currentBState = BATTLESTATE.PlayerWin;
-						expEarned = Mathf.RoundToInt (expEarned / (float)playerCharacters.Count); 
+						expEarned = Mathf.RoundToInt (expEarned / (float)playerCharacters.Count);
+						expEarned = 10;
 						GameObject spoilsDisplay = Instantiate (spoilsPrefab);
 						spoilsDisplay.transform.SetParent (battleCanvas.transform, false);
 					}
@@ -362,15 +367,14 @@ public class BattleEngine : MonoBehaviour {
 		}
 	}
 
-	void _goToStart (BattleCharacter givenBC)
+	void _listenForLineUp (BattleCharacter givenBC)
 	{
 		if(currentBState == BATTLESTATE.AdjustLineUp)
 		{
 			givenBC.hud.transform.position = givenBC._calcHudPosition();
 		}
 
-		Vector3 lineUpPos = _getLinePos(givenBC);
-		if(givenBC._approach(lineUpPos, walkSpeed))
+		if(iTween.Count(actingBC.gameObject) == 0)
 		{
 			givenBC.hud.transform.position = givenBC._calcHudPosition(); // safety check
 			if (currentBState == BATTLESTATE.PlayerAttack || currentBState == BATTLESTATE.EnemyAttack)
@@ -743,6 +747,7 @@ public class BattleEngine : MonoBehaviour {
 				{
 					actingBC.transform.Rotate (0, 180, 0);
 					_setWait (ATTACKSTATE.MovePostAction, standardWaitTime); // small wait to visually seperate attacking from returning
+					iTween.MoveTo(actingBC.gameObject, iTween.Hash(iT.MoveTo.position, _getLinePos(actingBC), iT.MoveTo.speed, 1, iT.MoveTo.easetype, "easeInOutQuad"));
 				}
 				break;
 			case ATTACKSTATE.HandleFail:
@@ -750,24 +755,144 @@ public class BattleEngine : MonoBehaviour {
 				currentAState = ATTACKSTATE.MovePostAction;
 				break;
 			case ATTACKSTATE.MovePostAction:
-				_goToStart (actingBC);
+				_listenForLineUp (actingBC);
 				break;
 		}
 	}
 
 	public void _plagueBite()
 	{
-		
+		switch (currentAState)
+		{
+			case ATTACKSTATE.InitAttack:
+				PressCommand command = (Instantiate (pressCommandPrefab, commandPosition, Quaternion.identity) as GameObject).GetComponent<PressCommand> ();
+				command._setAttributes("x", 3f, -1, true, Random.Range(0, 22));
+				Vector3 swipePos = new Vector3(targOpposed[0].transform.position.x, actingBC.transform.position.y, actingBC.transform.position.z);
+				swipePos.x += targOpposed[0].transform.right.x * (targOpposed[0].bcCollider.bounds.extents.x + actingBC.bcCollider.bounds.extents.x);
+				iTween.MoveTo(actingBC.gameObject, iTween.Hash(iT.MoveTo.position, swipePos, iT.MoveTo.speed, 1, iT.MoveTo.easetype, "easeInOutQuad"));
+				currentAState = ATTACKSTATE.MovePreAction;
+				break;
+			case ATTACKSTATE.MovePreAction:
+				if(iTween.Count(actingBC.gameObject) == 0)
+				{
+					if(targOpposed[0].elevation == 0)
+					{
+						_setWait (ATTACKSTATE.ActionState, standardWaitTime); // pause briefly before swiping at enemy
+					}
+					else // miss the target
+					{
+						actingBC.transform.Rotate (0, 180, 0);
+						_setWait (ATTACKSTATE.MovePostAction, standardWaitTime); // pause briefly before returning due to non-contact
+					}
+				}
+				break;
+			case ATTACKSTATE.ActionState:
+				if (commandsDestroyed > 0)
+				{
+					currentAState = ATTACKSTATE.ApplyAttack;
+				}
+				break;
+			case ATTACKSTATE.ApplyAttack:
+				bool mystics = false;
+
+				if (mystics == true)
+				{
+					_damageTarget (actingBC, 1);
+					_setWait (ATTACKSTATE.HandleFail, Damage.popTime + standardWaitTime);
+					break;
+				}
+
+				_damageTarget (targOpposed [0], activeAttack.baseDamage + actingBC._calcBattlePow());
+
+				if (bonus == 1)
+				{
+					Poison effect = Instantiate (statusEffectPrefab).AddComponent<Poison> ();
+					effect.turns = 2;
+					targOpposed [0]._addStatusEffect (effect);
+				}
+				actingBC.transform.Rotate (0, 180, 0);
+				_setWait (ATTACKSTATE.MovePostAction, standardWaitTime); // small wait to visually seperate attacking from returning
+				iTween.MoveTo(actingBC.gameObject, iTween.Hash(iT.MoveTo.position, _getLinePos(actingBC), iT.MoveTo.speed, 1, iT.MoveTo.easetype, "easeInOutQuad"));
+
+				break;
+			case ATTACKSTATE.HandleFail:
+				actingBC.transform.Rotate (0, 180, 0);
+				currentAState = ATTACKSTATE.MovePostAction;
+				break;
+			case ATTACKSTATE.MovePostAction:
+				_listenForLineUp (actingBC);
+				break;
+		}
 	}
 
 	public void _sewerStench()
 	{
-
+		switch (currentAState)
+		{
+			case ATTACKSTATE.InitAttack:
+				ChargeCommand command = (Instantiate (chargeCommandPrefab) as GameObject).GetComponent<ChargeCommand> ();
+				command._setAttributes("z", 6f, -1, true, Random.Range(-1, 3));
+				command._setChargeSpecificAttributes(true, 1f, true, 0f);
+				currentAState = ATTACKSTATE.ActionState;
+				break;
+			case ATTACKSTATE.MovePreAction:
+				break;
+			case ATTACKSTATE.ActionState:
+				if (commandsDestroyed > 0)
+				{
+					currentAState = ATTACKSTATE.ApplyAttack;
+				}
+				break;
+			case ATTACKSTATE.ApplyAttack:
+				Stench effect = Instantiate (statusEffectPrefab).AddComponent<Stench> ();
+				effect.turns = 1 + Mathf.Max(0, bonus);
+				targetFriendlies [0]._addStatusEffect (effect);
+				currentAState = ATTACKSTATE.MovePostAction;
+				break;
+			case ATTACKSTATE.MovePostAction:
+				_listenForLineUp (actingBC);
+				break;
+		}
 	}
 
 	public void _piedPiper()
 	{
+		switch (currentAState)
+		{
+			case ATTACKSTATE.InitAttack:
 
+				Instantiate (pipeCommandPrefab);
+				_setWait(ATTACKSTATE.ActionState, standardWaitTime);
+				break;
+			case ATTACKSTATE.MovePreAction:
+				break;
+			case ATTACKSTATE.ActionState:
+				if (!FindObjectOfType<PipeCommand> ())
+				{
+					bonus = Mathf.Max(1, (bonus+1)/2);
+					for(int i = 0; i < bonus; i++)
+					{
+						float xOffset = (actingBC.transform.position.x + .1f * i);// * 1.5f) + (-3f * actingBC.transform.right.x);
+						GameObject pRat = Instantiate(pipeRatPrefab);
+						pRat.transform.position = new Vector3(xOffset, actingBC.transform.position.y, 0);
+						pRat.transform.rotation = actingBC.transform.rotation;
+					}
+					currentAState = ATTACKSTATE.ApplyAttack;
+				}
+				break;
+			case ATTACKSTATE.ApplyAttack:
+				if (!FindObjectOfType<PipeRat> ())
+				{
+					currentAState = ATTACKSTATE.MovePostAction;
+				}
+				break;
+			case ATTACKSTATE.MovePostAction:
+				if (!FindObjectOfType<Damage> ())
+				{
+					_listenForLineUp (actingBC);
+				}
+				break;
+		}
 	}
 
 	public void _swoop()

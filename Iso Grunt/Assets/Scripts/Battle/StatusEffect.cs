@@ -6,17 +6,15 @@ public class StatusEffect : MonoBehaviour {
 	
 	public enum EFFECTSTATE {InitApply, ActivelyApply, FinishApply};
 
-	public GameObject dizzyStarsPrefab;
-	public Sprite poisonIcon, paralysisIcon, swordIcon, shieldIcon;
-
 	public BattleCharacter owner;
 
 	public EFFECTSTATE currentEffectState = EFFECTSTATE.InitApply;
 
-	protected string statusName;
 	public int turns, maxHpBuff, maxSpBuff, powBuff, defBuff;
 
 	public Sprite icon;
+
+	protected string statusName;
 
 	// Use this for initialization
 	void Start () {
@@ -67,7 +65,7 @@ public class Poison : StatusEffect
 	public Poison()
 	{
 		statusName = "Poisoned";
-		icon = poisonIcon;
+		icon = BattleEngine.self.poisonIcon;
 	}
 
 	public override void _applyInitChildEffect()
@@ -97,7 +95,7 @@ public class Stench : StatusEffect
 	public Stench()
 	{
 		statusName = "Stench";
-		icon = shieldIcon;
+		icon = BattleEngine.self.shieldIcon;
 		defBuff = 2;
 	}
 }
@@ -107,7 +105,7 @@ public class Ravenous : StatusEffect
 	public Ravenous()
 	{
 		statusName = "Ravenous";
-		icon = swordIcon;
+		icon = BattleEngine.self.swordIcon;
 		//pow is buffed based on bonus
 	}
 }
@@ -117,7 +115,7 @@ public class House : StatusEffect
 	public House()
 	{
 		statusName = "House";
-		icon = shieldIcon;
+		icon = BattleEngine.self.shieldIcon;
 		//def is buffed based on bonus
 	}
 }
@@ -127,14 +125,14 @@ public class Dizzy : StatusEffect
 	public Dizzy()
 	{
 		statusName = "Dizzy";
-		icon = paralysisIcon;
+		icon = BattleEngine.self.paralysisIcon;
 	}
 
 	public override void _applyInitChildEffect()
 	{
 		base._applyInitChildEffect();
 		owner.loseTurn = Random.Range(0,2) == 0 ? false : true;
-		DizzyStars stars = (Instantiate(dizzyStarsPrefab, owner.transform.position + Vector3.up, Quaternion.identity) as GameObject).GetComponent<DizzyStars>();
+		DizzyStars stars = (Instantiate(BattleEngine.self.dizzyStarsPrefab, owner.transform.position + Vector3.up, Quaternion.identity) as GameObject).GetComponent<DizzyStars>();
 		stars.transform.position = owner.transform.position + Vector3.up;
 		stars.dizzyBattleCharacter = owner;
 
